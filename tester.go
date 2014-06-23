@@ -19,7 +19,7 @@ type MqMessage struct {
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "RabbitMQ-Stress-Tester"
+	app.Name = "tester"
 	app.Usage = "Make the rabbit cry"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{"server, s", "rabbit-mq-test.cs1cloud.internal", "Hostname for RabbitMQ server"},
