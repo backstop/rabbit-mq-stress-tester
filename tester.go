@@ -46,7 +46,8 @@ func runApp(c *cli.Context) {
 	}
 
 	if c.Int("producer") != 0 {
-		makeProducers(c.Int("producer"), uri, c.Int("wait"), c.Int("bytes"), c.Int("concurrency"), c.Bool("quiet"), c.Bool("wait-for-ack"))
+		config := ProducerConfig{uri, c.Int("bytes"), c.Bool("quiet"), c.Bool("wait-for-ack")}
+		makeProducers(c.Int("producer"), c.Int("wait"), c.Int("concurrency"), config)
 	}
 }
 
@@ -58,11 +59,11 @@ func MakeQueue(c *amqp.Channel) amqp.Queue {
 	return q
 }
 
-func makeProducers(n int, uri string, wait int, bytes int, concurrency int, quiet bool, waitForAck bool) {
+func makeProducers(n int, wait int, concurrency int, config ProducerConfig) {
 
 	taskChan := make(chan int)
 	for i := 0; i < concurrency; i++ {
-		go Produce(uri, taskChan, bytes, quiet, waitForAck)
+		go Produce(config, taskChan)
 	}
 
 	start := time.Now()

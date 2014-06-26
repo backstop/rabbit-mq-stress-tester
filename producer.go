@@ -7,8 +7,15 @@ import (
 	"time"
 )
 
-func Produce(uri string, tasks chan int, bytes int, quiet bool, waitForAck bool) {
-	connection, err := amqp.Dial(uri)
+type ProducerConfig struct {
+	Uri        string
+	Bytes      int
+	Quiet      bool
+	WaitForAck bool
+}
+
+func Produce(config ProducerConfig, tasks chan int) {
+	connection, err := amqp.Dial(config.Uri)
 	if err != nil {
 		println(err.Error())
 		panic(err.Error())
@@ -20,7 +27,7 @@ func Produce(uri string, tasks chan int, bytes int, quiet bool, waitForAck bool)
 		panic(err1.Error())
 	}
 
-	if waitForAck {
+	if config.WaitForAck {
 		channel.Confirm(false)
 	}
 
@@ -41,7 +48,7 @@ func Produce(uri string, tasks chan int, bytes int, quiet bool, waitForAck bool)
 
 		start := time.Now()
 
-		message := &MqMessage{start, sequenceNumber, makeString(bytes)}
+		message := &MqMessage{start, sequenceNumber, makeString(config.Bytes)}
 		messageJson, _ := json.Marshal(message)
 
 		channel.Publish("", q.Name, true, false, amqp.Publishing{
@@ -54,9 +61,9 @@ func Produce(uri string, tasks chan int, bytes int, quiet bool, waitForAck bool)
 		},
 		)
 
-		confirmOne(ack, nack, quiet, waitForAck)
+		confirmOne(ack, nack, config.Quiet, config.WaitForAck)
 
-		if !quiet {
+		if !config.Quiet {
 			log.Println(time.Since(start))
 		}
 	}
