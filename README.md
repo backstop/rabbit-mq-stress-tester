@@ -33,9 +33,9 @@ Running
 	   --bytes, -b '0'					number of extra bytes to add to the RabbitMQ message payload. About 50K max
 	   --concurrency, -n '50'			number of reader/writer Goroutines
 	   --quiet, -q						Print only errors to stdout
+	   --wait-for-ack, -a				Wait for an ack or nack after enqueueing a message
 	   --version, -v					print the version
 	   --help, -h						show help
-
 
 Examples
 --------
