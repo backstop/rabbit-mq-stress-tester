@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func Produce(uri string, tasks chan int, bytes int, quiet bool) {
+func Produce(uri string, tasks chan int, bytes int, quiet bool, waitForAck bool) {
 	connection, err := amqp.Dial(uri)
 	if err != nil {
 		println(err.Error())
@@ -20,7 +20,9 @@ func Produce(uri string, tasks chan int, bytes int, quiet bool) {
 		panic(err1.Error())
 	}
 
-	channel.Confirm(false)
+	if waitForAck {
+		channel.Confirm(false)
+	}
 
 	ack, nack := channel.NotifyConfirm(make(chan uint64, 1), make(chan uint64, 1))
 
@@ -52,7 +54,7 @@ func Produce(uri string, tasks chan int, bytes int, quiet bool) {
 		},
 		)
 
-		confirmOne(ack, nack, quiet)
+		confirmOne(ack, nack, quiet, waitForAck)
 
 		if !quiet {
 			log.Println(time.Since(start))
@@ -61,14 +63,16 @@ func Produce(uri string, tasks chan int, bytes int, quiet bool) {
 
 }
 
-func confirmOne(ack, nack chan uint64, quiet bool) {
-	select {
-	case tag := <-ack:
-		if !quiet {
-			log.Println("Acked %d", tag)
+func confirmOne(ack, nack chan uint64, quiet bool, waitForAck bool) {
+	if waitForAck {
+		select {
+		case tag := <-ack:
+			if !quiet {
+				log.Println("Acked %d", tag)
+			}
+		case tag := <-nack:
+			log.Println("Nack alert! %d", tag)
 		}
-	case tag := <-nack:
-		log.Println("Nack alert! %d", tag)
 	}
 }
 

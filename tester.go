@@ -29,6 +29,7 @@ func main() {
 		cli.IntFlag{"bytes, b", 0, "number of extra bytes to add to the RabbitMQ message payload. About 50K max"},
 		cli.IntFlag{"concurrency, n", 50, "number of reader/writer Goroutines"},
 		cli.BoolFlag{"quiet, q", "Print only errors to stdout"},
+		cli.BoolFlag{"wait-for-ack, a", "Wait for an ack or nack after enqueueing a message"},
 	}
 	app.Action = func(c *cli.Context) {
 		runApp(c)
@@ -45,7 +46,7 @@ func runApp(c *cli.Context) {
 	}
 
 	if c.Int("producer") != 0 {
-		makeProducers(c.Int("producer"), uri, c.Int("wait"), c.Int("bytes"), c.Int("concurrency"), c.Bool("quiet"))
+		makeProducers(c.Int("producer"), uri, c.Int("wait"), c.Int("bytes"), c.Int("concurrency"), c.Bool("quiet"), c.Bool("wait-for-ack"))
 	}
 }
 
@@ -57,11 +58,11 @@ func MakeQueue(c *amqp.Channel) amqp.Queue {
 	return q
 }
 
-func makeProducers(n int, uri string, wait int, bytes int, concurrency int, quiet bool) {
+func makeProducers(n int, uri string, wait int, bytes int, concurrency int, quiet bool, waitForAck bool) {
 
 	taskChan := make(chan int)
 	for i := 0; i < concurrency; i++ {
-		go Produce(uri, taskChan, bytes, quiet)
+		go Produce(uri, taskChan, bytes, quiet, waitForAck)
 	}
 
 	start := time.Now()
