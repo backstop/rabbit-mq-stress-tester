@@ -2,9 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/streadway/amqp"
 	"log"
 	"time"
+
+	"github.com/streadway/amqp"
 )
 
 type ProducerConfig struct {
@@ -17,14 +18,12 @@ type ProducerConfig struct {
 func Produce(config ProducerConfig, tasks chan int) {
 	connection, err := amqp.Dial(config.Uri)
 	if err != nil {
-		println(err.Error())
-		panic(err.Error())
+		log.Fatal(err.Error())
 	}
 
-	channel, err1 := connection.Channel()
-	if err1 != nil {
-		println(err1.Error())
-		panic(err1.Error())
+	channel, err := connection.Channel()
+	if err != nil {
+		log.Fatal(err.Error())
 	}
 
 	if config.WaitForAck {

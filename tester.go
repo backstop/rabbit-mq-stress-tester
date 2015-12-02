@@ -57,9 +57,9 @@ func runApp(c *cli.Context) {
 }
 
 func MakeQueue(c *amqp.Channel) amqp.Queue {
-	q, err2 := c.QueueDeclare("stress-test-exchange", true, false, false, false, nil)
-	if err2 != nil {
-		panic(err2)
+	q, err := c.QueueDeclare("stress-test-exchange", true, false, false, false, nil)
+	if err != nil {
+		log.Fatal(err)
 	}
 	return q
 }
