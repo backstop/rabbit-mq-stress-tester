@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/codegangsta/cli"
-	"github.com/streadway/amqp"
 	"log"
 	"os"
 	"time"
+
+	"github.com/codegangsta/cli"
+	"github.com/streadway/amqp"
 )
 
 var totalTime int64 = 0
@@ -23,6 +24,9 @@ func main() {
 	app.Usage = "Make the rabbit cry"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{Name: "server, s", Value: "rabbit-mq-test.cs1cloud.internal", Usage: "Hostname for RabbitMQ server"},
+		cli.StringFlag{Name: "port, P", Value: "5672", Usage: "Port for RabbitMQ server"},
+		cli.StringFlag{Name: "user, u", Value: "guest", Usage: "user for RabbitMQ server"},
+		cli.StringFlag{Name: "password, pass", Value: "guest", Usage: "user pasword for RabbitMQ server"},
 		cli.IntFlag{Name: "producer, p", Value: 0, Usage: "Number of messages to produce, -1 to produce forever"},
 		cli.IntFlag{Name: "wait, w", Value: 0, Usage: "Number of nanoseconds to wait between publish events"},
 		cli.IntFlag{Name: "consumer, c", Value: -1, Usage: "Number of messages to consume. 0 consumes forever"},
@@ -39,7 +43,8 @@ func main() {
 
 func runApp(c *cli.Context) {
 	println("Running!")
-	uri := "amqp://guest:guest@" + c.String("server") + ":5672"
+	porto := "amqp://"
+	uri := porto + c.String("user") + ":" + c.String("password") + "@" + c.String("server") + ":" + c.String("port")
 
 	if c.Int("consumer") > -1 {
 		makeConsumers(uri, c.Int("concurrency"), c.Int("consumer"))
