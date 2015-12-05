@@ -5,14 +5,14 @@ rabbit-mq-stress-tester
 Compiling
 ---------
 
-    go build tester.go producer.go consumer.go
+    go build
 
-That will produce the executible `tester`
+That will produce the executible `rabbit-mq-stress-tester`
 
 Running
 -------
 
-    $ ./tester -h
+    $ ./rabbit-mq-stress-tester -h
 	NAME:
 	   tester - Make the rabbit cry
 
@@ -28,6 +28,9 @@ Running
 	GLOBAL OPTIONS:
 	   --server, -s 'rabbit-mq-test.cs1cloud.internal'	Hostname for RabbitMQ server
 	   --producer, -p '0'				Number of messages to produce, -1 to produce forever
+	   --port, -P 						Rabbitmq server port, default 5672
+	   --user, -u 						Rabbitmq username
+	   --password, --pass 		Rabbitmq password
 	   --wait, -w '0'					Number of nanoseconds to wait between publish events
 	   --consumer, -c '-1'				Number of messages to consume. 0 consumes forever
 	   --bytes, -b '0'					number of extra bytes to add to the RabbitMQ message payload. About 50K max
