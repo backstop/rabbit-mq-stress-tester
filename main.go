@@ -35,8 +35,9 @@ func main() {
 		cli.BoolFlag{Name: "quiet, q", Usage: "Print only errors to stdout"},
 		cli.BoolFlag{Name: "wait-for-ack, a", Usage: "Wait for an ack or nack after enqueueing a message"},
 	}
-	app.Action = func(c *cli.Context) {
+	app.Action = func(c *cli.Context) error {
 		runApp(c)
+		return nil
 	}
 	app.Run(os.Args)
 }
