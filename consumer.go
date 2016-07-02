@@ -40,6 +40,6 @@ func Consume(uri string, doneChan chan bool) {
 
 	}
 
-	log.Println("done recieving")
+	log.Println("done receiving")
 
 }
