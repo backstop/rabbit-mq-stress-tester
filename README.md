@@ -1,6 +1,12 @@
+Deprecated
+==========
+
+We're handing control of this repo over to https://github.com/agocs/rabbit-mq-stress-tester. Use that fork instead!
+
+Below is all accurate as of 2016-Aug-17
+
 rabbit-mq-stress-tester
 =======================
-
 
 Compiling
 ---------
